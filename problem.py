@@ -45,10 +45,19 @@ def _read_data(path, train_test):
     
     X = df.drop(['home_team_goal',
                  'away_team_goal',
-                 'season','date',
+                 'Unnamed: 0',
+                 'possession',
+                 'season',
                  'country_id',
                  'league_id',
-                 'match_api_id'],
+                 'match_api_id'] + \
+                #[f"away_player_Y{i}" for i in range(1, 12)] + \
+                [f"away_player_{i}" for i in range(1, 11)] + \
+                [f"home_player_{i}" for i in range(1, 12)] 
+                #[f"away_player_X{i}" for i in range(1, 12)] + \
+                #[f"home_player_Y{i}" for i in range(1, 12)] + \
+                #[f"home_player_X{i}" for i in range(1, 12)
+                ,
                 axis='columns')
     
     Y = pd.Series(0,index=df.index)
@@ -63,14 +72,14 @@ def _read_data(path, train_test):
         train_index = df[df['season'].isin(['2008/2009','2009/2010',
                                             '2010/2011','2011/2012',
                                             '2012/2013','2013/2014'])].index
-        X_train = X.loc[train_index.values].set_index(pd.Index(range(1,len(train_index))))
-        y_train = Y[train_index].set_axis(pd.Index(range(1,len(train_index))))
+        X_train = X.loc[train_index.values].set_index(pd.Index(range(len(train_index))))
+        y_train = Y[train_index].set_axis(pd.Index(range(len(train_index))))
         return X_train, y_train
     
     if train_test == 'test' :
         test_index = df[df['season'].isin(['2014/2015','2015/2016'])].index
-        X_test = X.loc[test_index.values].set_index(pd.Index(range(1,len(test_index))))
-        y_test = Y[test_index].set_axis(pd.Index(range(1,len(test_index))))
+        X_test = X.loc[test_index.values].set_index(pd.Index(range(len(test_index))))
+        y_test = Y[test_index].set_axis(pd.Index(range(len(test_index))))
         return X_test, y_test
 
 
