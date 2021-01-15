@@ -1,8 +1,8 @@
 import os
 import pandas as pd
-import sqlite3
 import rampwf as rw
 from sklearn.model_selection import StratifiedShuffleSplit
+import zipfile
 
 problem_title = 'Prediction of European Soccer League match results'
 _target_column_name = 'Result'
@@ -30,13 +30,16 @@ def get_cv(X, y):
 
 def _read_data(path, train_test):
     
-    conn = sqlite3.connect(os.path.join(path, 'data', 'matches.csv'))
+    if os.path.isfile('matches.csv'):
+        df = pd.read_csv('matches.csv')
     
-    query = "SELECT * FROM Match;"
+    else:
+        path_to_zip_file = os.path.join(path, 'data', 'matches.zip')
+        with zipfile.ZipFile(path_to_zip_file, 'r') as zip_ref:
+            zip_ref.extractall(path)
+        df = pd.read_csv('matches.csv')
 
-    df = pd.read_sql_query(query,conn)
-
-    df = df.drop(df.columns[range(77,85)],axis='columns')
+    df = df.drop(df.columns[range(77,85)], axis='columns')
 
     df = df.set_index('id')
     
@@ -45,7 +48,8 @@ def _read_data(path, train_test):
                  'season','date',
                  'country_id',
                  'league_id',
-                 'match_api_id'],axis='columns')
+                 'match_api_id'],
+                axis='columns')
     
     Y = pd.Series(0,index=df.index)
 
