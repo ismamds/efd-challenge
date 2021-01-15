@@ -39,12 +39,12 @@ def _read_data(path, train_test):
             zip_ref.extractall(path)
         df = pd.read_csv('matches.csv')
 
-    df = df.drop(df.columns[range(77,85)], axis='columns')
-
     df = df.set_index('id')
     
     X = df.drop(['home_team_goal',
                  'away_team_goal',
+                 'goal',
+                 'shoton', 'shotoff', 'foulcommit', 'card', 'cross', 'corner',
                  'Unnamed: 0',
                  'possession',
                  'season',
@@ -52,7 +52,7 @@ def _read_data(path, train_test):
                  'league_id',
                  'match_api_id'] + \
                 #[f"away_player_Y{i}" for i in range(1, 12)] + \
-                [f"away_player_{i}" for i in range(1, 11)] + \
+                [f"away_player_{i}" for i in range(1, 12)] + \
                 [f"home_player_{i}" for i in range(1, 12)] 
                 #[f"away_player_X{i}" for i in range(1, 12)] + \
                 #[f"home_player_Y{i}" for i in range(1, 12)] + \
