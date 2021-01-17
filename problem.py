@@ -7,7 +7,7 @@ import zipfile
 problem_title = 'Prediction of European Soccer League match results'
 _target_column_name = 'Result'
 _ignore_column_names = []
-_prediction_label_names = ['Home_win', 'Draw', 'Away_win']
+_prediction_label_names = [0, 1, 2]
 
 # A type (class) which will be used to create wrapper objects for y_pred
 Predictions = rw.prediction_types.make_multiclass(
@@ -22,7 +22,7 @@ score_types = [
 
 
 def get_cv(X, y):
-    cv = StratifiedShuffleSplit(n_splits=8, test_size=0.2, random_state=57)
+    cv = StratifiedShuffleSplit(n_splits=1, test_size=0.2, random_state=57)
     return cv.split(X, y)
 
 
@@ -81,6 +81,8 @@ def _read_data(path, train_test):
         X_test = X.loc[test_index.values].set_index(pd.Index(range(len(test_index))))
         y_test = Y[test_index].set_axis(pd.Index(range(len(test_index))))
         return X_test, y_test
+    
+
 
 
 def get_train_data(path='.'):
